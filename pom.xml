@@ -6,7 +6,7 @@
 
     <groupId>com.github.summiner</groupId>
     <artifactId>gencore</artifactId>
-    <version>1.6.3</version>
+    <version>1.7.0</version>
     <packaging>jar</packaging>
 
     <name>GenCore</name>
