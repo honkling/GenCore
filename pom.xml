@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.lilygens</groupId>
-    <artifactId>GenCore</artifactId>
+    <groupId>com.github.summiner</groupId>
+    <artifactId>gencore</artifactId>
     <version>1.6.3</version>
     <packaging>jar</packaging>
 
@@ -46,7 +46,7 @@
                     <relocations>
                         <relocation>
                             <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                            <shadedPattern>com.gencore.dependencies.nbtapi</shadedPattern>
+                            <shadedPattern>com.github.summiner.gencore.dependencies.nbtapi</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

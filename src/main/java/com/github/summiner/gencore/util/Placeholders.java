@@ -1,7 +1,7 @@
-package com.gencore.util;
+package com.github.summiner.gencore.util;
 
-import com.gencore.events.Events;
-import com.gencore.handler.PluginHandler;
+import com.github.summiner.gencore.events.Events;
+import com.github.summiner.gencore.handler.PluginHandler;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.Configuration;

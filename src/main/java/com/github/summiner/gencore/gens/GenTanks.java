@@ -1,7 +1,7 @@
-package com.gencore.gens;
+package com.github.summiner.gencore.gens;
 
-import com.gencore.handler.PluginHandler;
-import com.gencore.util.ColorUtil;
+import com.github.summiner.gencore.handler.PluginHandler;
+import com.github.summiner.gencore.util.ColorUtil;
 import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

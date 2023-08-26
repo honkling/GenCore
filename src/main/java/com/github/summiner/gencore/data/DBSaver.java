@@ -1,6 +1,6 @@
-package com.gencore.data;
+package com.github.summiner.gencore.data;
 
-import com.gencore.handler.PluginHandler;
+import com.github.summiner.gencore.handler.PluginHandler;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;

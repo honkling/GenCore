@@ -1,10 +1,10 @@
-package com.gencore.gui;
+package com.github.summiner.gencore.gui;
 
-import com.gencore.events.Events;
-import com.gencore.gens.GenTanks;
-import com.gencore.handler.PluginHandler;
-import com.gencore.util.ColorUtil;
-import com.gencore.util.ItemUtil;
+import com.github.summiner.gencore.events.Events;
+import com.github.summiner.gencore.gens.GenTanks;
+import com.github.summiner.gencore.handler.PluginHandler;
+import com.github.summiner.gencore.util.ColorUtil;
+import com.github.summiner.gencore.util.ItemUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

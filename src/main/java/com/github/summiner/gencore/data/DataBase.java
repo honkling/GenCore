@@ -1,4 +1,4 @@
-package com.gencore.data;
+package com.github.summiner.gencore.data;
 
 import java.io.File;
 import java.sql.Connection;
@@ -10,9 +10,9 @@ import java.sql.Statement;
 import java.util.Objects;
 import java.util.UUID;
 
-import com.gencore.events.EventManager;
-import com.gencore.events.Events;
-import com.gencore.handler.PluginHandler;
+import com.github.summiner.gencore.events.EventManager;
+import com.github.summiner.gencore.events.Events;
+import com.github.summiner.gencore.handler.PluginHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;

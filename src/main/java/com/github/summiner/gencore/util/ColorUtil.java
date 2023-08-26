@@ -1,4 +1,4 @@
-package com.gencore.util;
+package com.github.summiner.gencore.util;
 
 import net.md_5.bungee.api.ChatColor;
 

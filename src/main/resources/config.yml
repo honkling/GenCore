@@ -2,7 +2,7 @@
 genworld: world # World where the generators will work
 gentime: 300 # Time in ticks between item dropping. 20 ticks / second
 genslotcap: 0 # The max Generator cap a player can obtain | 0 = none
-defaultslots: 50 # Starting amount of gen slots for new players
+defaultslots: 50 # Starting amount of gen slots for new players | -1 = none
 placeholders:
   prefix: "gens" # use yourprefix_placeholdername | ex: gens_max_gens
   maxgens: "max_gens"

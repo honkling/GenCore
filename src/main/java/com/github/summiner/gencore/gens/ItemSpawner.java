@@ -1,10 +1,10 @@
-package com.gencore.gens;
+package com.github.summiner.gencore.gens;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.gencore.events.Events;
-import com.gencore.handler.PluginHandler;
+import com.github.summiner.gencore.events.Events;
+import com.github.summiner.gencore.handler.PluginHandler;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

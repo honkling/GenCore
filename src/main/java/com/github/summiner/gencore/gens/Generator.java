@@ -1,6 +1,6 @@
-package com.gencore.gens;
+package com.github.summiner.gencore.gens;
 
-import com.gencore.util.ColorUtil;
+import com.github.summiner.gencore.util.ColorUtil;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

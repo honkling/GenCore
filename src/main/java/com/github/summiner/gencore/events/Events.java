@@ -1,11 +1,12 @@
-package com.gencore.events;
+package com.github.summiner.gencore.events;
 
-import com.gencore.handler.PluginHandler;
-import com.gencore.data.DataBase;
-import com.gencore.gens.GenTanks;
-import com.gencore.gens.Generator;
-import com.gencore.gui.GenCoreGUI;
-import com.gencore.util.ItemUtil;
+import com.github.summiner.gencore.GenCore;
+import com.github.summiner.gencore.handler.PluginHandler;
+import com.github.summiner.gencore.data.DataBase;
+import com.github.summiner.gencore.gens.GenTanks;
+import com.github.summiner.gencore.gens.Generator;
+import com.github.summiner.gencore.gui.GenCoreGUI;
+import com.github.summiner.gencore.util.ItemUtil;
 import de.tr7zw.changeme.nbtapi.NBTBlock;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatMessageType;
@@ -254,7 +255,7 @@ public class Events implements Listener {
             };
             int slots = EventManager.getSlots(player);
             final int placed = EventManager.getPlaced(player) + 1;
-            if (placed <= slots) {
+            if (placed <= slots || GenCore.getPlugin(GenCore.class).gensSlotsEnabled) {
                 if (!event.isCancelled()) {
                     if (event.getBlock().getWorld() != Bukkit.getWorld(Objects.requireNonNull(PluginHandler.getPlugin().getConfig().get("genworld")).toString())) event.setCancelled(true);
                     else if (event.getItemInHand().getItemMeta() != null && !event.getItemInHand().getItemMeta().getDisplayName().equals(Objects.requireNonNull(PluginHandler.getPlugin().Generators.get(event.getBlock().getType()).getItem().getItemMeta()).getDisplayName())) event.setCancelled(true);

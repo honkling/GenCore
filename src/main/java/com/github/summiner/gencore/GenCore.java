@@ -1,4 +1,4 @@
-package com.gencore;
+package com.github.summiner.gencore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,14 +8,14 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import com.gencore.data.DBSaver;
-import com.gencore.data.DataBase;
-import com.gencore.events.Events;
-import com.gencore.gens.Generator;
-import com.gencore.gens.ItemSpawner;
-import com.gencore.gui.GenCoreGUI;
-import com.gencore.util.ItemUtil;
-import com.gencore.util.Placeholders;
+import com.github.summiner.gencore.data.DBSaver;
+import com.github.summiner.gencore.data.DataBase;
+import com.github.summiner.gencore.events.Events;
+import com.github.summiner.gencore.gens.Generator;
+import com.github.summiner.gencore.gens.ItemSpawner;
+import com.github.summiner.gencore.gui.GenCoreGUI;
+import com.github.summiner.gencore.util.ItemUtil;
+import com.github.summiner.gencore.util.Placeholders;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -37,6 +37,7 @@ public final class GenCore extends JavaPlugin {
     public HashMap<Material, Generator> Generators = new HashMap<>();
     public ArrayList<Generator> ListedGenerators = new ArrayList<>();
     public ArrayList<Material> GenDrops = new ArrayList<>();
+    public boolean gensSlotsEnabled = true;
     public Economy economy = null;
 
     Runnable save = () -> {
@@ -152,6 +153,7 @@ public final class GenCore extends JavaPlugin {
             GenCoreGUI.setupGensGuis();
             this.startLoop();
             Bukkit.getOnlinePlayers().forEach(Events::runJoin);
+            gensSlotsEnabled = getConfig().getInt("defaultslots") == -1;
         }
     }
 

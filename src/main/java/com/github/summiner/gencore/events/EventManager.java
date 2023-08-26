@@ -1,4 +1,4 @@
-package com.gencore.events;
+package com.github.summiner.gencore.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

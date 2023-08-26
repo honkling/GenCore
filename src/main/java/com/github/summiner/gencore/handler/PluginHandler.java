@@ -1,6 +1,6 @@
-package com.gencore.handler;
+package com.github.summiner.gencore.handler;
 
-import com.gencore.GenCore;
+import com.github.summiner.gencore.GenCore;
 
 public class PluginHandler {
     public static GenCore getPlugin() {
