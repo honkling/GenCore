@@ -22,8 +22,8 @@ public class ItemSpawner implements Runnable {
         start(config.getBoolean("tanks.enabled"), config.getLong("gentime"));
     }
 
-    public void start(Boolean tanks, Long time) {
-        if(tanks) {
+    public void start(Boolean tanksEnabled, Long interval) {
+        if(tanksEnabled) {
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -38,7 +38,7 @@ public class ItemSpawner implements Runnable {
                         });
                     }
                 }
-            }.runTaskTimerAsynchronously(PluginHandler.getPlugin(), time, time);
+            }.runTaskTimerAsynchronously(PluginHandler.getPlugin(), interval, interval);
         } else {
             new BukkitRunnable() {
                 @Override
@@ -54,10 +54,10 @@ public class ItemSpawner implements Runnable {
                                 Location c = value.get(size-1);
                                 if(c.getChunk().isLoaded()) {
                                     Location loc = new Location(c.getWorld(), c.getX() + 0.5D, c.getY() + 1.0D, c.getZ() + 0.5D);
-                                    NBTItem nbt = new NBTItem(new ItemStack(PluginHandler.getPlugin().Generators.get(key).getDrop()));
+                                    NBTItem nbt = new NBTItem(new ItemStack(PluginHandler.getPlugin().generatorData.get(key).getDrop()));
                                     var compound = nbt.getOrCreateCompound("GenCore");
                                     compound.setBoolean("gen_Item", true);
-                                    compound.setLong("gen_Amount", PluginHandler.getPlugin().Generators.get(key).getSell());
+                                    compound.setLong("gen_Amount", PluginHandler.getPlugin().generatorData.get(key).getSell());
                                     ItemStack item = nbt.getItem();
                                     item.setAmount(size);
                                     Bukkit.getScheduler().runTask(PluginHandler.getPlugin(), () -> {
@@ -69,7 +69,7 @@ public class ItemSpawner implements Runnable {
                         });
                     }
                 }
-            }.runTaskTimerAsynchronously(PluginHandler.getPlugin(), time, time);
+            }.runTaskTimerAsynchronously(PluginHandler.getPlugin(), interval, interval);
         }
     }
 }

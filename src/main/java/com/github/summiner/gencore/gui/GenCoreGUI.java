@@ -1,7 +1,7 @@
 package com.github.summiner.gencore.gui;
 
 import com.github.summiner.gencore.events.Events;
-import com.github.summiner.gencore.gens.GenTanks;
+import com.github.summiner.gencore.gens.GenTank;
 import com.github.summiner.gencore.handler.PluginHandler;
 import com.github.summiner.gencore.util.ColorUtil;
 import com.github.summiner.gencore.util.ItemUtil;
@@ -43,7 +43,7 @@ public class GenCoreGUI implements Listener {
         for (int i = 28; i <= 34; ++i) {
             slots.add(i);
         }
-        int pages = (int) Math.floor(PluginHandler.getPlugin().Generators.size() / 21f)+1;
+        int pages = (int) Math.floor(PluginHandler.getPlugin().generatorData.size() / 21f)+1;
 
         for(int page = 1; page < pages+1; page++) {
             int start = (page*21)-20;
@@ -68,7 +68,7 @@ public class GenCoreGUI implements Listener {
             }
             final int[] loops = {0};
             final int[] slot = {10};
-           PluginHandler.getPlugin().ListedGenerators.forEach(value -> {
+           PluginHandler.getPlugin().generatorDataList.forEach(value -> {
                 if(slot[0] < 35){
                     loops[0]++;
                     if(loops[0] >= start){
@@ -98,7 +98,7 @@ public class GenCoreGUI implements Listener {
         ItemMeta meta = item.getItemMeta();
         assert meta != null;
         meta.setDisplayName(ColorUtil.formatColor("&aSell your items!"));
-        GenTanks tank = Events.tanks.get(player.getUniqueId());
+        GenTank tank = Events.tanks.get(player.getUniqueId());
         String[] lore = {ColorUtil.formatColor("&7Value: &a$&f"+nf.format(tank.getValue())), ColorUtil.formatColor("&7Items: &f"+nf.format(tank.getSize())), ColorUtil.formatColor("&8(Left-Click)")};
         meta.setLore(Arrays.asList(lore));
         item.setItemMeta(meta);

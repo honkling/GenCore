@@ -12,14 +12,14 @@ import org.json.simple.JSONObject;
 import java.text.NumberFormat;
 import java.util.*;
 
-public class GenTanks {
+public class GenTank {
 
-    private final HashMap<Material, Generator> gens = PluginHandler.getPlugin().Generators;
+    private final HashMap<Material, Generator> gens = PluginHandler.getPlugin().generatorData;
     private  HashMap<Material, Long> items = new HashMap<>();
-    public static NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
+    public static NumberFormat numFormat = NumberFormat.getInstance(new Locale("en", "US"));
     private final UUID uuid;
 
-    public GenTanks(UUID uuid) {
+    public GenTank(UUID uuid) {
         this.uuid = uuid;
     }
 
@@ -29,7 +29,7 @@ public class GenTanks {
 
     static Configuration config = PluginHandler.getPlugin().getConfig();
     public final Boolean exp_enabled = config.getBoolean("tanks.exp.enabled");
-    public final String message1 = config.getString("messages.solditems");
+    public final String message_solditems = config.getString("messages.solditems");
 
     public void addItems(Material a, Long b) {
         items.putIfAbsent(a, 0L);
@@ -46,10 +46,10 @@ public class GenTanks {
 
     public void importSavingItems(String data) {
         try {
-            HashMap map = new Gson().fromJson(data, items.getClass());
-            HashMap<Material, Long> map2 = new HashMap<>();
-            map.forEach((key, value) -> map2.put(Material.getMaterial(key.toString().toUpperCase()), Long.parseLong(String.valueOf(value).split("\\.")[0])));
-            items = map2;
+            HashMap jsonData = new Gson().fromJson(data, items.getClass());
+            HashMap<Material, Long> parsedData = new HashMap<>();
+            jsonData.forEach((key, value) -> parsedData.put(Material.getMaterial(key.toString().toUpperCase()), Long.parseLong(String.valueOf(value).split("\\.")[0])));
+            items = parsedData;
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -88,9 +88,9 @@ public class GenTanks {
         if(exp_enabled) {
            PluginHandler.getPlugin().sendCommand(player, (Objects.requireNonNull(config.getString("tanks.exp.command"))).replaceAll("\\{amount}", String.valueOf(total[0] * config.getDouble("tanks.exp.amount"))));
         }
-        assert message1 != null;
+        assert message_solditems != null;
         assert player != null;
-        player.sendMessage(ColorUtil.formatColor(message1.replaceAll("\\{items}", nf.format(total2[0])).replaceAll("\\{amount}", nf.format(total[0]))));
-       PluginHandler.getPlugin().addMoney(player, total[0]);
+        player.sendMessage(ColorUtil.formatColor(message_solditems.replaceAll("\\{items}", numFormat.format(total2[0])).replaceAll("\\{amount}", numFormat.format(total[0]))));
+        PluginHandler.getPlugin().addMoney(player, total[0]);
     }
 }

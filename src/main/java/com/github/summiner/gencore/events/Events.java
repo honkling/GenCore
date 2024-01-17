@@ -3,7 +3,7 @@ package com.github.summiner.gencore.events;
 import com.github.summiner.gencore.GenCore;
 import com.github.summiner.gencore.handler.PluginHandler;
 import com.github.summiner.gencore.data.DataBase;
-import com.github.summiner.gencore.gens.GenTanks;
+import com.github.summiner.gencore.gens.GenTank;
 import com.github.summiner.gencore.gens.Generator;
 import com.github.summiner.gencore.gui.GenCoreGUI;
 import com.github.summiner.gencore.util.ItemUtil;
@@ -42,25 +42,25 @@ public class Events implements Listener {
     public static HashMap<Player, Integer> slots_gens = new HashMap<>();
     public static HashMap<Player, Integer> placed_gens = new HashMap<>();
     public static HashMap<Player, HashMap<Material, ArrayList<Location>>> active_gens = new HashMap<>();
-    public static HashMap<UUID, GenTanks> tanks = new HashMap<>();
+    public static HashMap<UUID, GenTank> tanks = new HashMap<>();
 
-    NumberFormat nf = NumberFormat.getInstance(new Locale("en", "US"));
+    NumberFormat numFormat = NumberFormat.getInstance(new Locale("en", "US"));
 
     static Configuration config = PluginHandler.getPlugin().getConfig();
-    final String message1 = config.getString("messages.maxgenerator");
-    final String message2 = config.getString("messages.placegeneratorsuccess");
-    final String message3 = config.getString("messages.upgradegeneratorsuccess");
-    final String message4 = config.getString("messages.upgradeneedmoney");
-    final String message5 = config.getString("messages.notyourgenerator");
-    final String message6 = config.getString("messages.pickedupgenerator");
-    final String message7 = config.getString("messages.placedgeneratormax");
-    final String message8 = config.getString("messages.maxgenslots");
-    final Integer gencap = config.getInt("genslotcap");
-    public static final Integer defaultslots = config.getInt("defaultslots");
+    final String message_max_gens = config.getString("messages.maxgenerator");
+    final String message_place_success = config.getString("messages.placegeneratorsuccess");
+    final String message_place_max = config.getString("messages.placedgeneratormax");
+    final String message_pickup = config.getString("messages.pickedupgenerator");
+    final String message_upgrade_success = config.getString("messages.upgradegeneratorsuccess");
+    final String message_upgrade_broke = config.getString("messages.upgradeneedmoney");
+    final String message_not_yours = config.getString("messages.notyourgenerator");
+    final String message_genslots_capped = config.getString("messages.maxgenslots");
+    final Integer genslots_cap = config.getInt("genslotcap");
+    public static final Integer genslots_default = config.getInt("defaultslots");
     static final Boolean tanks_enabled = config.getBoolean("tanks.enabled");
 
     public static void runJoin(Player player) {
-        tanks.put(player.getUniqueId(), new GenTanks(player.getUniqueId()));
+        tanks.put(player.getUniqueId(), new GenTank(player.getUniqueId()));
         String[] query = DataBase.queryPlayer(player);
         if (query == null) {
             DataBase.savePlayerData(player, true);
@@ -121,13 +121,13 @@ public class Events implements Listener {
         if (event.getAction().toString().equals("LEFT_CLICK_BLOCK")) {
             try {
                 Material block = Objects.requireNonNull(event.getClickedBlock()).getType();
-                if (PluginHandler.getPlugin().Generators.containsKey(block)) {
+                if (PluginHandler.getPlugin().generatorData.containsKey(block)) {
                     HashMap<Material, ArrayList<Location>> a = active_gens.get(event.getPlayer());
                     if (!isGenerator(event.getClickedBlock())) return;
                     if (a == null) {
                         event.setCancelled(true);
-                        assert message5 != null;
-                        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message5)));
+                        assert message_not_yours != null;
+                        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
                         return;
                     }
                     ArrayList<Location> b = a.get(block);
@@ -137,12 +137,12 @@ public class Events implements Listener {
                         placed_gens.replace(event.getPlayer(), EventManager.getPlaced(event.getPlayer()) - 1);
                         PluginHandler.getPlugin().giveGenerator(event.getPlayer(), block);
                         b.remove(event.getClickedBlock().getLocation());
-                        assert message6 != null;
-                        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message6.replaceAll("\\{placed}", placed_gens.get(event.getPlayer()).toString()).replaceAll("\\{max}", slots_gens.get(event.getPlayer()).toString()))));
+                        assert message_pickup != null;
+                        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_pickup.replaceAll("\\{placed}", placed_gens.get(event.getPlayer()).toString()).replaceAll("\\{max}", slots_gens.get(event.getPlayer()).toString()))));
                     } else {
                         event.setCancelled(true);
-                        assert message5 != null;
-                        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message5)));
+                        assert message_not_yours != null;
+                        event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
                     }
                 }
             } catch (NullPointerException var14) {
@@ -169,9 +169,9 @@ public class Events implements Listener {
                 }
                 if (m.getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&9Gen Slots Voucher &7(Right-Click)"))) {
                     int num = m.getEnchantLevel(Enchantment.LURE);
-                    if(gencap > 0 && (slots_gens.get(player) + num) > gencap) {
-                        assert message8 != null;
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message8)));
+                    if(genslots_cap > 0 && (slots_gens.get(player) + num) > genslots_cap) {
+                        assert message_genslots_capped != null;
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_genslots_capped)));
                     } else if (num >= 1) {
                         num += EventManager.getSlots(player);
                         slots_gens.replace(player, num);
@@ -182,16 +182,16 @@ public class Events implements Listener {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (event.getPlayer().isSneaking()) {
                     Block block = event.getClickedBlock();
-                    if (PluginHandler.getPlugin().Generators.containsKey(block.getType())) {
+                    if (PluginHandler.getPlugin().generatorData.containsKey(block.getType())) {
                         if (!isGenerator(event.getClickedBlock())) return;
                         try {
-                            Generator gen = PluginHandler.getPlugin().Generators.get(block.getType());
+                            Generator gen = PluginHandler.getPlugin().generatorData.get(block.getType());
                             HashMap<Material, ArrayList<Location>> c = active_gens.get(event.getPlayer());
                             ArrayList<Location> a = c.get(block.getType());
                             if (a != null && a.contains(block.getLocation())) {
                                 if(gen.getNextBlock() == null) {
-                                    assert message1 != null;
-                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message1)));
+                                    assert message_max_gens != null;
+                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_max_gens)));
                                     return;
                                 }
                                 double needed = gen.getUpgradeCost();
@@ -201,21 +201,21 @@ public class Events implements Listener {
                                     c.putIfAbsent(block.getType(), new ArrayList<>());
                                     a = c.get(block.getType());
                                     a.add(block.getLocation());
-                                    assert message3 != null;
-                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message3)));
+                                    assert message_upgrade_success != null;
+                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_upgrade_success)));
                                 } else {
                                     double left = needed - PluginHandler.getPlugin().economy.getBalance(event.getPlayer());
-                                    assert message4 != null;
-                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message4.replace("{amount}", nf.format(Math.round(left))))));
+                                    assert message_upgrade_broke != null;
+                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_upgrade_broke.replace("{amount}", numFormat.format(Math.round(left))))));
                                 }
                             } else {
-                                assert message5 != null;
-                                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message5)));
+                                assert message_not_yours != null;
+                                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
                             }
                         } catch (NullPointerException e) {
                             Bukkit.getLogger().severe(String.valueOf(e));
-                            assert message5 != null;
-                            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message5)));
+                            assert message_not_yours != null;
+                            event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
                         }
                     }
                 }
@@ -246,7 +246,7 @@ public class Events implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void blockPlace(BlockPlaceEvent event) {
-        if (PluginHandler.getPlugin().Generators.containsKey(event.getBlock().getType())) {
+        if (PluginHandler.getPlugin().generatorData.containsKey(event.getBlock().getType())) {
             Player player = event.getPlayer();
             NBTItem nbt = new NBTItem(player.getItemInHand());
             if (!nbt.getBoolean("isGen")) {
@@ -258,7 +258,7 @@ public class Events implements Listener {
             if (placed <= slots || GenCore.getPlugin(GenCore.class).gensSlotsEnabled) {
                 if (!event.isCancelled()) {
                     if (event.getBlock().getWorld() != Bukkit.getWorld(Objects.requireNonNull(PluginHandler.getPlugin().getConfig().get("genworld")).toString())) event.setCancelled(true);
-                    else if (event.getItemInHand().getItemMeta() != null && !event.getItemInHand().getItemMeta().getDisplayName().equals(Objects.requireNonNull(PluginHandler.getPlugin().Generators.get(event.getBlock().getType()).getItem().getItemMeta()).getDisplayName())) event.setCancelled(true);
+                    else if (event.getItemInHand().getItemMeta() != null && !event.getItemInHand().getItemMeta().getDisplayName().equals(Objects.requireNonNull(PluginHandler.getPlugin().generatorData.get(event.getBlock().getType()).getItem().getItemMeta()).getDisplayName())) event.setCancelled(true);
                     else {
                         new BukkitRunnable() {
                             @Override
@@ -272,8 +272,8 @@ public class Events implements Listener {
                                     b.add(event.getBlock().getLocation());
                                     a.replace(event.getBlock().getType(), b);
                                     active_gens.replace(player, a);
-                                    assert message2 != null;
-                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message2.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
+                                    assert message_place_success != null;
+                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_success.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
 
                                     var nbtblock = new NBTBlock(event.getBlock());
                                     var compound = nbtblock.getData().getOrCreateCompound("GenCore");
@@ -286,7 +286,7 @@ public class Events implements Listener {
                 }
             } else {
                 event.setCancelled(true);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message7.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_max.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
             }
         }
     }
