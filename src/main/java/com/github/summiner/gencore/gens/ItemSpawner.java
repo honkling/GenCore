@@ -54,11 +54,11 @@ public class ItemSpawner implements Runnable {
                                 Location c = value.get(size-1);
                                 if(c.getChunk().isLoaded()) {
                                     Location loc = new Location(c.getWorld(), c.getX() + 0.5D, c.getY() + 1.0D, c.getZ() + 0.5D);
-                                    ItemStack item = new ItemStack(PluginHandler.getPlugin().Generators.get(key).getDrop());
-                                    NBTItem nbt = new NBTItem(item);
+                                    NBTItem nbt = new NBTItem(new ItemStack(PluginHandler.getPlugin().Generators.get(key).getDrop()));
                                     var compound = nbt.getOrCreateCompound("GenCore");
                                     compound.setBoolean("gen_Item", true);
                                     compound.setLong("gen_Amount", PluginHandler.getPlugin().Generators.get(key).getSell());
+                                    ItemStack item = nbt.getItem();
                                     item.setAmount(size);
                                     Bukkit.getScheduler().runTask(PluginHandler.getPlugin(), () -> {
                                         Entity e = loc.getWorld().dropItem(loc, item);
