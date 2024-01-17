@@ -49,12 +49,12 @@ public class Events implements Listener {
 
     static Configuration config = PluginHandler.getPlugin().getConfig();
 
-    final String message_max_gens = config.getString("messages.maxgenerator");
     final String message_place_success = config.getString("messages.placegeneratorsuccess");
     final String message_place_max = config.getString("messages.placedgeneratormax");
     final String message_pickup = config.getString("messages.pickedupgenerator");
     final String message_upgrade_success = config.getString("messages.upgradegeneratorsuccess");
     final String message_upgrade_broke = config.getString("messages.upgradeneedmoney");
+    final String message_upgrade_maxed = config.getString("messages.maxgenerator");
     final String message_not_yours = config.getString("messages.notyourgenerator");
     final String message_genslots_capped = config.getString("messages.maxgenslots");
     final SoundUtil.Sound sound_place = SoundUtil.fromConfigSection(config, "sounds.place");
@@ -201,8 +201,8 @@ public class Events implements Listener {
                             ArrayList<Location> a = c.get(block.getType());
                             if (a != null && a.contains(block.getLocation())) {
                                 if(gen.getNextBlock() == null) {
-                                    assert message_max_gens != null;
-                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_max_gens)));
+                                    assert message_upgrade_maxed != null;
+                                    event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_upgrade_maxed)));
                                     SoundUtil.playSound(event.getPlayer(), sound_error);
                                     return;
                                 }
@@ -270,7 +270,7 @@ public class Events implements Listener {
                 return;
             };
             int slots = EventManager.getSlots(player);
-            final int placed = EventManager.getPlaced(player) + 1;
+            final int placed = EventManager.getPlaced(player);
             if (placed <= slots || GenCore.getPlugin(GenCore.class).gensSlotsEnabled) {
                 if (!event.isCancelled()) {
                     if (event.getBlock().getWorld() != Bukkit.getWorld(Objects.requireNonNull(PluginHandler.getPlugin().getConfig().get("genworld")).toString())) event.setCancelled(true);
@@ -280,7 +280,7 @@ public class Events implements Listener {
                             @Override
                             public void run() {
                                 if(!event.isCancelled()) {
-                                    placed_gens.replace(player, placed);
+                                    placed_gens.replace(player, placed + 1);
                                     active_gens.putIfAbsent(player, new HashMap<>());
                                     HashMap<Material, ArrayList<Location>> a = active_gens.get(player);
                                     a.putIfAbsent(event.getBlock().getType(), new ArrayList<>());
@@ -289,7 +289,7 @@ public class Events implements Listener {
                                     a.replace(event.getBlock().getType(), b);
                                     active_gens.replace(player, a);
                                     assert message_place_success != null;
-                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_success.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
+                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_success.replace("{placed}", String.valueOf(placed + 1)).replace("{max}", String.valueOf(slots)))));
                                     SoundUtil.playSound(event.getPlayer(), sound_place);
 
                                     var nbtblock = new NBTBlock(event.getBlock());
