@@ -2,6 +2,7 @@ package com.github.summiner.gencore.gens;
 
 import com.github.summiner.gencore.handler.PluginHandler;
 import com.github.summiner.gencore.util.ColorUtil;
+import com.github.summiner.gencore.util.SoundUtil;
 import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -91,6 +92,7 @@ public class GenTank {
         assert message_solditems != null;
         assert player != null;
         player.sendMessage(ColorUtil.formatColor(message_solditems.replaceAll("\\{items}", numFormat.format(total2[0])).replaceAll("\\{amount}", numFormat.format(total[0]))));
+        SoundUtil.playSound(player, SoundUtil.fromConfigSection(PluginHandler.getPlugin().getConfig(), "sound.solditems"));
         PluginHandler.getPlugin().addMoney(player, total[0]);
     }
 }

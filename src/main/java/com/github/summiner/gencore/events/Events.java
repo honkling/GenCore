@@ -7,6 +7,7 @@ import com.github.summiner.gencore.gens.GenTank;
 import com.github.summiner.gencore.gens.Generator;
 import com.github.summiner.gencore.gui.GenCoreGUI;
 import com.github.summiner.gencore.util.ItemUtil;
+import com.github.summiner.gencore.util.SoundUtil;
 import de.tr7zw.changeme.nbtapi.NBTBlock;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatMessageType;
@@ -47,6 +48,7 @@ public class Events implements Listener {
     NumberFormat numFormat = NumberFormat.getInstance(new Locale("en", "US"));
 
     static Configuration config = PluginHandler.getPlugin().getConfig();
+
     final String message_max_gens = config.getString("messages.maxgenerator");
     final String message_place_success = config.getString("messages.placegeneratorsuccess");
     final String message_place_max = config.getString("messages.placedgeneratormax");
@@ -55,6 +57,11 @@ public class Events implements Listener {
     final String message_upgrade_broke = config.getString("messages.upgradeneedmoney");
     final String message_not_yours = config.getString("messages.notyourgenerator");
     final String message_genslots_capped = config.getString("messages.maxgenslots");
+    final SoundUtil.Sound sound_place = SoundUtil.fromConfigSection(config, "sounds.place");
+    final SoundUtil.Sound sound_pickup = SoundUtil.fromConfigSection(config, "sounds.pickup");
+    final SoundUtil.Sound sound_upgrade = SoundUtil.fromConfigSection(config, "sounds.upgrade");
+    final SoundUtil.Sound sound_error = SoundUtil.fromConfigSection(config, "sounds.error");
+
     final Integer genslots_cap = config.getInt("genslotcap");
     public static final Integer genslots_default = config.getInt("defaultslots");
     static final Boolean tanks_enabled = config.getBoolean("tanks.enabled");
@@ -128,6 +135,7 @@ public class Events implements Listener {
                         event.setCancelled(true);
                         assert message_not_yours != null;
                         event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
+                        SoundUtil.playSound(event.getPlayer(), sound_error);
                         return;
                     }
                     ArrayList<Location> b = a.get(block);
@@ -139,10 +147,12 @@ public class Events implements Listener {
                         b.remove(event.getClickedBlock().getLocation());
                         assert message_pickup != null;
                         event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_pickup.replaceAll("\\{placed}", placed_gens.get(event.getPlayer()).toString()).replaceAll("\\{max}", slots_gens.get(event.getPlayer()).toString()))));
+                        SoundUtil.playSound(event.getPlayer(), sound_pickup);
                     } else {
                         event.setCancelled(true);
                         assert message_not_yours != null;
                         event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
+                        SoundUtil.playSound(event.getPlayer(), sound_error);
                     }
                 }
             } catch (NullPointerException var14) {
@@ -172,6 +182,7 @@ public class Events implements Listener {
                     if(genslots_cap > 0 && (slots_gens.get(player) + num) > genslots_cap) {
                         assert message_genslots_capped != null;
                         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_genslots_capped)));
+                        SoundUtil.playSound(event.getPlayer(), sound_error);
                     } else if (num >= 1) {
                         num += EventManager.getSlots(player);
                         slots_gens.replace(player, num);
@@ -192,6 +203,7 @@ public class Events implements Listener {
                                 if(gen.getNextBlock() == null) {
                                     assert message_max_gens != null;
                                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_max_gens)));
+                                    SoundUtil.playSound(event.getPlayer(), sound_error);
                                     return;
                                 }
                                 double needed = gen.getUpgradeCost();
@@ -203,19 +215,23 @@ public class Events implements Listener {
                                     a.add(block.getLocation());
                                     assert message_upgrade_success != null;
                                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_upgrade_success)));
+                                    SoundUtil.playSound(event.getPlayer(), sound_upgrade);
                                 } else {
                                     double left = needed - PluginHandler.getPlugin().economy.getBalance(event.getPlayer());
                                     assert message_upgrade_broke != null;
                                     event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_upgrade_broke.replace("{amount}", numFormat.format(Math.round(left))))));
+                                    SoundUtil.playSound(event.getPlayer(), sound_error);
                                 }
                             } else {
                                 assert message_not_yours != null;
                                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
+                                SoundUtil.playSound(event.getPlayer(), sound_error);
                             }
                         } catch (NullPointerException e) {
                             Bukkit.getLogger().severe(String.valueOf(e));
                             assert message_not_yours != null;
                             event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_not_yours)));
+                            SoundUtil.playSound(event.getPlayer(), sound_error);
                         }
                     }
                 }
@@ -274,6 +290,7 @@ public class Events implements Listener {
                                     active_gens.replace(player, a);
                                     assert message_place_success != null;
                                     player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_success.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
+                                    SoundUtil.playSound(event.getPlayer(), sound_place);
 
                                     var nbtblock = new NBTBlock(event.getBlock());
                                     var compound = nbtblock.getData().getOrCreateCompound("GenCore");
@@ -287,6 +304,7 @@ public class Events implements Listener {
             } else {
                 event.setCancelled(true);
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_max.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
+                SoundUtil.playSound(event.getPlayer(), sound_error);
             }
         }
     }
