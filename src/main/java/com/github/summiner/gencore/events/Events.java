@@ -124,8 +124,8 @@ public class Events implements Listener {
 
     @EventHandler
     public void GenInteract(PlayerInteractEvent event) {
-        ItemStack i;
-        if (event.getAction().toString().equals("LEFT_CLICK_BLOCK")) {
+        ItemStack tool;
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
             try {
                 Material block = Objects.requireNonNull(event.getClickedBlock()).getType();
                 if (PluginHandler.getPlugin().generatorData.containsKey(block)) {
@@ -167,13 +167,13 @@ public class Events implements Listener {
             }
 
             Player player = event.getPlayer();
-            if (Objects.equals(event.getHand(), EquipmentSlot.OFF_HAND)) {
+            if (event.getHand() == EquipmentSlot.OFF_HAND) {
                 return;
             }
 
-            i = player.getInventory().getItemInMainHand();
-            if (i.getType() == Material.PAPER) {
-                ItemMeta m = i.getItemMeta();
+            tool = player.getInventory().getItemInMainHand();
+            if (tool.getType() == Material.PAPER) {
+                ItemMeta m = tool.getItemMeta();
                 if (m == null) {
                     return;
                 }
@@ -186,7 +186,7 @@ public class Events implements Listener {
                     } else if (num >= 1) {
                         num += EventManager.getSlots(player);
                         slots_gens.replace(player, num);
-                        i.setAmount(i.getAmount() - 1);
+                        tool.setAmount(tool.getAmount() - 1);
                     }
                 }
             }
@@ -264,7 +264,8 @@ public class Events implements Listener {
     public void blockPlace(BlockPlaceEvent event) {
         if (PluginHandler.getPlugin().generatorData.containsKey(event.getBlock().getType())) {
             Player player = event.getPlayer();
-            NBTItem nbt = new NBTItem(player.getItemInHand());
+            ItemStack tool = ItemUtil.getItemInHand(player);
+            NBTItem nbt = new NBTItem(tool);
             if (!nbt.getBoolean("isGen")) {
                 event.isCancelled();
                 return;
@@ -274,7 +275,7 @@ public class Events implements Listener {
             if (placed <= slots || GenCore.getPlugin(GenCore.class).gensSlotsEnabled) {
                 if (!event.isCancelled()) {
                     if (event.getBlock().getWorld() != Bukkit.getWorld(Objects.requireNonNull(PluginHandler.getPlugin().getConfig().get("genworld")).toString())) event.setCancelled(true);
-                    else if (event.getItemInHand().getItemMeta() != null && !event.getItemInHand().getItemMeta().getDisplayName().equals(Objects.requireNonNull(PluginHandler.getPlugin().generatorData.get(event.getBlock().getType()).getItem().getItemMeta()).getDisplayName())) event.setCancelled(true);
+                    else if (!tool.getItemMeta().getDisplayName().equals(Objects.requireNonNull(PluginHandler.getPlugin().generatorData.get(event.getBlock().getType()).getItem().getItemMeta()).getDisplayName())) event.setCancelled(true);
                     else {
                         new BukkitRunnable() {
                             @Override
