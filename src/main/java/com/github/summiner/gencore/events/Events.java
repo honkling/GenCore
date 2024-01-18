@@ -271,7 +271,7 @@ public class Events implements Listener {
                 return;
             };
             int slots = EventManager.getSlots(player);
-            final int placed = EventManager.getPlaced(player);
+            final int placed = EventManager.getPlaced(player) + 1;
             if (placed <= slots || GenCore.getPlugin(GenCore.class).gensSlotsEnabled) {
                 if (!event.isCancelled()) {
                     if (event.getBlock().getWorld() != Bukkit.getWorld(Objects.requireNonNull(PluginHandler.getPlugin().getConfig().get("genworld")).toString())) event.setCancelled(true);
@@ -281,7 +281,7 @@ public class Events implements Listener {
                             @Override
                             public void run() {
                                 if(!event.isCancelled()) {
-                                    placed_gens.replace(player, placed + 1);
+                                    placed_gens.replace(player, placed);
                                     active_gens.putIfAbsent(player, new HashMap<>());
                                     HashMap<Material, ArrayList<Location>> a = active_gens.get(player);
                                     a.putIfAbsent(event.getBlock().getType(), new ArrayList<>());
@@ -290,7 +290,7 @@ public class Events implements Listener {
                                     a.replace(event.getBlock().getType(), b);
                                     active_gens.replace(player, a);
                                     assert message_place_success != null;
-                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_success.replace("{placed}", String.valueOf(placed + 1)).replace("{max}", String.valueOf(slots)))));
+                                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_success.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
                                     SoundUtil.playSound(event.getPlayer(), sound_place);
 
                                     var nbtblock = new NBTBlock(event.getBlock());
@@ -304,7 +304,7 @@ public class Events implements Listener {
                 }
             } else {
                 event.setCancelled(true);
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_max.replace("{placed}", String.valueOf(placed)).replace("{max}", String.valueOf(slots)))));
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', message_place_max.replace("{placed}", String.valueOf(placed - 1)).replace("{max}", String.valueOf(slots)))));
                 SoundUtil.playSound(event.getPlayer(), sound_error);
             }
         }
