@@ -12,8 +12,8 @@ public class Placeholders extends PlaceholderExpansion {
     public Configuration config = PluginHandler.getPlugin().getConfig();
 
     private final String prefix = config.getString("placeholders.prefix");
-    private final String option1 = config.getString("placeholders.maxgens");
-    private final String option2 = config.getString("placeholders.placedgens");
+    private final String max_gens = config.getString("placeholders.maxgens");
+    private final String placed_gens = config.getString("placeholders.placedgens");
 
     @Override
     public @NotNull String getAuthor() {
@@ -34,11 +34,11 @@ public class Placeholders extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if(!player.isOnline()) {
-            if(params.equalsIgnoreCase(option1) || params.equalsIgnoreCase(option2)) return "0";
+            if(params.equalsIgnoreCase(max_gens) || params.equalsIgnoreCase(placed_gens)) return "0";
             return null;
         }
-        if(params.equalsIgnoreCase(option1)) return String.valueOf(Events.slots_gens.get(player));
-        else if(params.equalsIgnoreCase(option2)) return String.valueOf(Events.placed_gens.get(player));
+        if(params.equalsIgnoreCase(max_gens)) return String.valueOf(Events.slots_gens.get(player));
+        else if(params.equalsIgnoreCase(placed_gens)) return String.valueOf(Events.placed_gens.get(player));
         return null;
     }
 

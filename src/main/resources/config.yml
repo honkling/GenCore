@@ -29,6 +29,26 @@ messages:
   placedgeneratormax: "&cYou already have &f{placed}&7/&f{max} &cGenerators placed" # When the player already has max generators placed
   solditems: "&eYou sold &6{items} &eitems for &a${amount}" # When the player sells items through GenTanks
   maxgenslots: "&cYou already have the maximum number of gen slots or this voucher would pass the maximum!" # When the player redeems more generators than allowed to
+sounds:
+  # Sounds can either be a single value of the sound id, or multiple value with id, pitch, and value
+  place:
+    id: "block.note_block.iron_xylophone"
+    volume: 1
+    pitch: 1.498 # C#
+  pickup:
+    id: "block.note_block.iron_xylophone"
+    volume: 1
+    pitch: 1.122 # G#
+  upgrade:
+    id: "block.note_block.iron_xylophone"
+    volume: 1
+    pitch: 1.682 # D#
+  solditems:
+    id: "block.note_block.iron_xylophone"
+    volume: 1
+    pitch: 1.88 # F
+  error: "entity.villager.no"
+
 gens:
   beacon:
     block: "beacon" # The block that the Generator uses

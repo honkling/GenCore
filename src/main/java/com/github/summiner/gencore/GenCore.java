@@ -34,9 +34,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class GenCore extends JavaPlugin {
-    public HashMap<Material, Generator> Generators = new HashMap<>();
-    public ArrayList<Generator> ListedGenerators = new ArrayList<>();
-    public ArrayList<Material> GenDrops = new ArrayList<>();
+    public HashMap<Material, Generator> generatorData = new HashMap<>();
+    public ArrayList<Generator> generatorDataList = new ArrayList<>();
+    public ArrayList<Material> genDrops = new ArrayList<>();
     public boolean gensSlotsEnabled = true;
     public Economy economy = null;
 
@@ -84,18 +84,18 @@ public final class GenCore extends JavaPlugin {
         new Thread(new DBSaver()).start();
     }
 
-    public void addGenerator(String block, String drop, String next, Long worth, Long upgrade, String name, String lore) {
-        Material b = Material.getMaterial(block.toUpperCase());
-        Material d = Material.getMaterial(drop.toUpperCase());
-        Material n = Material.getMaterial(next.toUpperCase());
-        List<String> l = Arrays.asList(lore.replace("||", "@@").split("@@"));
+    public void addGenerator(String block, String drop, String next, Long worth, Long upgrade, String name, String loreUnsplit) {
+        Material blockMaterial = Material.getMaterial(block.toUpperCase());
+        Material dropMaterial = Material.getMaterial(drop.toUpperCase());
+        Material nextGenMaterial = Material.getMaterial(next.toUpperCase());
+        List<String> lore = Arrays.asList(loreUnsplit.replace("||", "@@").split("@@"));
         if(next.equals("MAX")) {
-            n = null;
+            nextGenMaterial = null;
         }
-        Generator gen = new Generator(b, name, d, worth, upgrade, l, n);
-        Generators.putIfAbsent(b, gen);
-        GenDrops.add(gen.getDrop());
-        ListedGenerators.add(gen);
+        Generator gen = new Generator(blockMaterial, name, dropMaterial, worth, upgrade, lore, nextGenMaterial);
+        generatorData.putIfAbsent(blockMaterial, gen);
+        genDrops.add(gen.getDrop());
+        generatorDataList.add(gen);
     }
 
     public void clearData(Player player) {
@@ -105,7 +105,7 @@ public final class GenCore extends JavaPlugin {
     }
 
     public void giveGenerator(Player player, Material type) {
-        player.getInventory().addItem(Generators.get(type).getItem());
+        player.getInventory().addItem(generatorData.get(type).getItem());
     }
 
     private void initItems() {
@@ -234,7 +234,7 @@ public final class GenCore extends JavaPlugin {
                 if(!Bukkit.getOnlinePlayers().contains(p)) {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cERROR"));
                     return true;
-                } else if(!Generators.containsKey(m)){
+                } else if(!generatorData.containsKey(m)){
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cERROR"));
                     return true;
                 } else {

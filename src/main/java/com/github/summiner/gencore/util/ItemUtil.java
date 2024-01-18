@@ -21,11 +21,11 @@ public class ItemUtil {
 
     public static HashMap<String, ItemStack> ItemStacks = new HashMap<>();
 
-    @SuppressWarnings("deprecation")
     public static ItemStack getItemInHand(HumanEntity player) {
-        if(player.getItemInHand().getType() == Material.AIR) {
+        if (player.getInventory().getItemInMainHand().getType() == Material.AIR) {
             return player.getInventory().getItemInOffHand();
-        } else return player.getItemInHand();
+        }
+        return player.getInventory().getItemInMainHand();
     }
 
     public static void createItem(String name, String display, @Nullable String lore, Material material, Boolean glowing) {

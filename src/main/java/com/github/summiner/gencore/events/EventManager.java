@@ -67,7 +67,7 @@ public class EventManager implements Listener {
     }
 
     public static Integer getSlots(Player player) {
-        Events.slots_gens.putIfAbsent(player, Events.defaultslots);
+        Events.slots_gens.putIfAbsent(player, Events.genslots_default);
         return Events.slots_gens.get(player);
     }
 
