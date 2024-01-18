@@ -32,15 +32,15 @@ public class GenTank {
     public final Boolean exp_enabled = config.getBoolean("tanks.exp.enabled");
     public final String message_solditems = config.getString("messages.solditems");
 
-    public void addItems(Material a, Long b) {
-        items.putIfAbsent(a, 0L);
-        items.replace(a, items.get(a) + b);
+    public void addItems(Material itemType, Long amount) {
+        items.putIfAbsent(itemType, 0L);
+        items.replace(itemType, items.get(itemType) + amount);
     }
 
-    public String getSavingItems(Boolean d) {
+    public String getSavingItems(Boolean clearData) {
         JSONObject data = new JSONObject();
         data.putAll(items);
-        if(d) items.clear();
+        if(clearData) items.clear();
         if(data.toString() == null) return "";
         return data.toString();
     }
